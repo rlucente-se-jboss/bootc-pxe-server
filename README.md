@@ -119,7 +119,6 @@ tag the image as `prod` to mark it for our use case as the "production" image
     podman tag $CONTAINER_REPO:v1 $CONTAINER_REPO:prod
     podman push $CONTAINER_REPO:prod
 
-# create a kickstart for the bootable container image
 generate the kickstart file to be served by the tftp server for the PXE boot
 
     ./gen-ks.sh
