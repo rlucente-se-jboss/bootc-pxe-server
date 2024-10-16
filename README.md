@@ -2,7 +2,17 @@
 # Setup a PXE Server
 This project shows how to setup a PXE Server that supports PXE
 installations of a RHEL Image Mode bootable container image. This server
-also runs a lightweight registry for RHEL Image Mode installations.
+also runs a lightweight registry for RHEL Image Mode installations. This
+project envisions a combined server that is running services to support
+PXE booting of RHEL Image Mode including:
+
+* dhcpd - provides IP address and "next server" to complete PXE boot process
+* tftpd - supports legacy PXE boot via TFTP protocol
+* httpd - supports UEFI PXE with HTTP and hosts the kickstart file to install from the registry
+* container registry - serves the bootable container image for the installation
+
+The same server is also used to build a bootable container image that
+can be installed on a target edge device via PXE boot.
 
 ## Prepare your network for a new DHCP server
 Since you're creating a new DHCP server, you need to make sure that there
