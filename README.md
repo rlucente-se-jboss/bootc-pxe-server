@@ -108,7 +108,7 @@ The full list of options in the `demo.conf` file are shown here.
 | SUBNET_IP   | The network address for the subnetwork |
 | ROUTER_IP   | The IP address for the default router |
 
-### Bootable Container
+### Bootable Container Image and Container Registry
 | Parameter | Description |
 | --------- | ----------- |
 | BOOT_ISO         | Minimal boot ISO to extract kernel and initramfs to support PXE boot |
