@@ -86,27 +86,31 @@ Edit the `demo.conf` file and make sure the settings are correct. At a
 minimum, you should adjust the credentials for simple content access.
 The full list of options in the `demo.conf` file are shown here.
 
-| Red Hat Simple Content Access |
-| ----------------------------- |
+### Red Hat Simple Content Access
+| Parameter | Description |
+| --------- | ----------- |
 | SCA_USER | Your username |
 | SCA_PASS | Your password |
 
-| Target Edge Device |
-| ------------------ |
+### Target Edge Device
+| Parameter | Description |
+| --------- | ----------- |
 | EDGE_USER | User name |
 | EDGE_PASS | Plaintext password |
 | EDGE_HASH | SHA-512 hash of the EDGE_PASS parameter |
 
-| DHCP Settings |
-| ------------- |
+### DHCP Settings
+| Parameter | Description |
+| --------- | ----------- |
 | HOSTIP      | The routable IP address to the PXE server |
 | SUBNET      | The first three tuples of the IPv4 address of the subnetwork for the PXE server |
 | SUBNET_MASK | The subnet mask (e.g. 255.255.255.0) for the PXE server |
 | SUBNET_IP   | The network address for the subnetwork |
 | ROUTER_IP   | The IP address for the default router |
 
-| Bootable Container |
-| ------------------ |
+### Bootable Container
+| Parameter | Description |
+| --------- | ----------- |
 | BOOT_ISO         | Minimal boot ISO to extract kernel and initramfs to support PXE boot |
 | REGISTRYPORT     | The port for the local container registry |
 | CONTAINER_REPO   | The fully qualified name for your bootable container repository |
