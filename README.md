@@ -14,6 +14,8 @@ PXE booting of RHEL Image Mode including:
 The same server is also used to build a bootable container image that
 can be installed on a target edge device via PXE boot.
 
+There's also a great [article](https://developers.redhat.com/articles/2024/08/20/bare-metal-deployments-image-mode-rhel) that discusses this approach.
+
 ## Prepare your network for a new DHCP server
 Since you're creating a new DHCP server, you need to make sure that there
 is no competing DHCP server on the target network. How to do this really
@@ -21,17 +23,23 @@ depends on your environment. I ran this as a guest VM using libvirt on
 RHEL. The specific steps I took were first to edit the default virtual
 network.
 
+First, stop the default network.
+
+    sudo virsh net-destroy default
+
+Edit the default network configuration.
+
     sudo virsh net-edit default
 
-Then delete the following stanza and save the file.
+Then delete the `<dhcp ... />` stanza and save the file. On my
+installation, I removed the following lines.
 
     <dhcp>
       <range start='192.168.122.2' end='192.168.122.254'/>
     </dhcp>
 
-Next, stop and restart the virtual network for the changes to take effect.
+Next, restart the virtual network for the changes to take effect.
 
-    sudo virsh net-destroy default
     sudo virsh net-start default
 
 Finally, check that the virtual network is running.
@@ -63,6 +71,7 @@ network.
 
 | Parameter | Value |
 | --------- | ----- |
+| Configuration | Manual |
 | IP Address | 192.168.122.2 |
 | Subnet Mask | 255.255.255.0 |
 | Default Router | 192.168.122.1 |
@@ -70,27 +79,45 @@ network.
 
 ## Prepare the host
 These instructions assume that this repository is cloned or copied to
-your user's home directory on the host (e.g. `~/pxe-server`). The below
-instructions follow that assumption.
+your user's home directory on the host (e.g. `~/bootc-pxe-server`). The
+below instructions follow that assumption.
 
 Edit the `demo.conf` file and make sure the settings are correct. At a
 minimum, you should adjust the credentials for simple content access.
 The full list of options in the `demo.conf` file are shown here.
 
+| Red Hat Simple Content Access |
+| ----------------------------- |
 | Option           | Description |
 | ---------------- | ----------- |
-| SCA_USER         | Your username for Red Hat Simple Content Access |
-| SCA_PASS         | Your password for Red Hat Simple Content Access |
-| EDGE_USER        | The name of a user on the target edge device |
-| EDGE_PASS        | The plaintext password for the user on the target edge device |
-| EDGE_HASH        | A SHA-512 hash of the EDGE_PASS parameter |
-| BOOT_ISO         | Minimal boot ISO used to create a custom ISO with additional kernel command line arguments and a custom kickstart file |
-| CONTAINER_REPO   | The fully qualified name for your bootable container repository |
-| HOSTIP           | The routable IP address to this host |
-| SUBNET_MASK      | The subnet mask (e.g. 255.255.255.0) for this network |
-| SUBNET_IP        | The first three of four tuples from the HOSTIP |
-| ROUTER_IP        | The IP address for the default router |
+| SCA_USER | Your username |
+| SCA_PASS | Your password |
+
+| Target Edge Device |
+| ------------------ |
+| Option | Description |
+| ------ | ----------- |
+| EDGE_USER | User name |
+| EDGE_PASS | Plaintext password |
+| EDGE_HASH | SHA-512 hash of the EDGE_PASS parameter |
+
+| DHCP Settings |
+| ------------- |
+| Option | Description |
+| ------ | ----------- |
+| HOSTIP      | The routable IP address to the PXE server |
+| SUBNET      | The first three tuples of the IPv4 address of the subnetwork for the PXE server |
+| SUBNET_MASK | The subnet mask (e.g. 255.255.255.0) for the PXE server |
+| SUBNET_IP   | The network address for the subnetwork |
+| ROUTER_IP   | The IP address for the default router |
+
+| Bootable Container |
+| ------------------ |
+| Option | Description |
+| ------ | ----------- |
+| BOOT_ISO         | Minimal boot ISO to extract kernel and initramfs to support PXE boot |
 | REGISTRYPORT     | The port for the local container registry |
+| CONTAINER_REPO   | The fully qualified name for your bootable container repository |
 | REGISTRYINSECURE | Boolean for whether the registry requires TLS |
 | BOOTC_KICKSTART  | The kickstart file to send to the PXE client |
 
