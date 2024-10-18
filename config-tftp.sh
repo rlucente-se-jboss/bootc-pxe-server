@@ -27,6 +27,8 @@ umount /mnt
 # set grub config
 cat > /var/lib/tftpboot/redhat/EFI/BOOT/grub.cfg <<EOF
 ### BEGIN /etc/grub.d/10_linux ###
+set timeout=60
+
 menuentry 'Install RHEL Image Mode' --class fedora --class gnu-linux --class gnu –class os {
   linuxefi redhat/images/pxeboot/vmlinuz inst.stage2=http://$HOSTIP/redhat quiet inst.ks=http://$HOSTIP/$BOOTC_KICKSTART
   initrdefi redhat/images/pxeboot/initrd.img
