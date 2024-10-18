@@ -12,26 +12,24 @@ firewall-cmd --permanent --add-service=tftp
 firewall-cmd --reload
 
 # access EFI boot image files from the boot ISO image
-mount -t iso9660 $BOOT_ISO /mnt -o loop,ro
+mount -o loop $BOOT_ISO /mnt
 
 # copy EFI boot images from ISO
 mkdir -p /var/lib/tftpboot/redhat
-cp -r /mnt/EFI /var/lib/tftpboot/redhat/
+cp -r /mnt/* /var/lib/tftpboot/redhat
 chmod -R 755 /var/lib/tftpboot/redhat/
 
-mkdir -p /var/www/html/redhat
-cp -r /mnt/EFI /var/www/html/redhat/
-chmod -R 755 /var/www/html/redhat/
+cp -r /var/lib/tftpboot/redhat /var/www/html/
 
 # unmount the boot ISO image
 umount /mnt
 
 # set grub config
 cat > /var/lib/tftpboot/redhat/EFI/BOOT/grub.cfg <<EOF
-set timeout=60
-menuentry 'RHEL Image Mode' {
-  linux images/pxeboot/vmlinuz ip=dhcp inst.ks=http://$HOSTIP/$BOOTC_KICKSTART
-  initrd images/pxeboot/initrd.img
+### BEGIN /etc/grub.d/10_linux ###
+menuentry 'Install RHEL Image Mode' --class fedora --class gnu-linux --class gnu –class os {
+  linuxefi redhat/images/pxeboot/vmlinuz inst.stage2=http://$HOSTIP/redhat quiet inst.ks=http://$HOSTIP/$BOOTC_KICKSTART
+  initrdefi redhat/images/pxeboot/initrd.img
 }
 EOF
 
