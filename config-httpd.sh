@@ -13,6 +13,8 @@ firewall-cmd --reload
 
 # copy the kickstart file to the web server
 cp $BOOTC_KICKSTART /var/www/html/
+chmod 0755 /var/www/html
+restorecon -vFr /var/www/html
 
 # start the services automatically on boot
 systemctl enable --now httpd
