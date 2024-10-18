@@ -1,5 +1,4 @@
-# WORK IN PROGRESS
-# Setup a PXE Server
+# Network Boot of RHEL Image Mode
 This project shows how to setup a PXE Server that supports PXE
 installations of a RHEL Image Mode bootable container image. This server
 also runs a lightweight registry for RHEL Image Mode installations. This
@@ -14,14 +13,14 @@ PXE booting of RHEL Image Mode including:
 The same server is also used to build a bootable container image that
 can be installed on a target edge device via PXE boot.
 
-There's also a great [article](https://developers.redhat.com/articles/2024/08/20/bare-metal-deployments-image-mode-rhel) that discusses this approach.
+There's also a great [article](https://developers.redhat.com/articles/2024/08/20/bare-metal-deployments-image-mode-rhel)
+that discusses this approach.
 
 ## Prepare your network for a new DHCP server
 Since you're creating a new DHCP server, you need to make sure that there
 is no competing DHCP server on the target network. How to do this really
 depends on your environment. I ran this as a guest VM using libvirt on
-RHEL. The specific steps I took were first to edit the default virtual
-network.
+a RHEL laptop.
 
 First, stop the default network.
 
@@ -49,25 +48,27 @@ Finally, check that the virtual network is running.
 The virtual network should show as active.
 
 ## Start with minimal RHEL 9.4 installation
-Start with a minimal install of RHEL 9.4 either on baremetal or on a guest
-VM. Use UEFI firmware, if able to, when installing your system. Also
-make sure there's sufficient disk space on the RHEL 9.4 instance to
-support the demo. I typically configure a 128 GiB disk on the guest VM.
+Start with a minimal install of RHEL 9.4 either on baremetal or on a
+guest VM. From this point forward, we'll refer to this system as the
+SERVER. Use UEFI firmware, if able to, when installing your system. Also
+make sure there's sufficient disk space on the SERVER to support the
+demo. I typically configure a 128 GiB disk on the SERVER.
 
-Make sure to enable FIPS mode when installing RHEL. When the installer
-first boots, select `Install Red Hat Enterprise Linux 9.4` on the GRUB
-boot menu and then press `e` to edit the boot commandline. Add `fips=1`
-to the end of the line that begins with `linuxefi` and then press CTRL-X
-to continue booting.
+Make sure to enable FIPS mode during installation, so that configuring
+FIPS on any bootable container you create also uses properly defined
+keys. To do that, select `Install Red Hat Enterprise Linux 9.4` on
+first boot within the GRUB boot menu and then press `e` to edit the
+boot commandline. Add `fips=1` to the end of the line that begins with
+`linuxefi` and then press CTRL-X to continue booting.
 
 During RHEL installation, configure a regular user with `sudo` privileges
 on the host.
 
-You'll also need to manually configure a static IP address for this server
+You'll also need to manually configure a static IP address for the SERVER
 as it will be the DHCP server for it's network. The network settings
 should make sense for the network being used. When manually configuring
-my guest VM, I used the following network settings based on my libvirt
-network.
+my network connection during installation, I used the following network
+settings based on my libvirt network.
 
 | Parameter | Value |
 | --------- | ----- |
@@ -77,29 +78,29 @@ network.
 | Default Router | 192.168.122.1 |
 | DNS Server | 192.168.122.1 |
 
-## Prepare the host
+## Prepare the SERVER
 These instructions assume that this repository is cloned or copied to
-your user's home directory on the host (e.g. `~/bootc-pxe-server`). The
+your user's home directory on the SERVER (e.g. `~/bootc-pxe-server`). The
 below instructions follow that assumption.
 
 Edit the `demo.conf` file and make sure the settings are correct. At a
 minimum, you should adjust the credentials for simple content access.
 The full list of options in the `demo.conf` file are shown here.
 
-### Red Hat Simple Content Access
+#### Red Hat Simple Content Access
 | Parameter | Description |
 | --------- | ----------- |
 | SCA_USER | Your username |
 | SCA_PASS | Your password |
 
-### Target Edge Device
+#### Target Edge Device
 | Parameter | Description |
 | --------- | ----------- |
 | EDGE_USER | User name |
 | EDGE_PASS | Plaintext password |
 | EDGE_HASH | SHA-512 hash of the EDGE_PASS parameter |
 
-### DHCP Settings
+#### DHCP Settings
 | Parameter | Description |
 | --------- | ----------- |
 | HOSTIP      | The routable IP address to the PXE server |
@@ -108,7 +109,7 @@ The full list of options in the `demo.conf` file are shown here.
 | SUBNET_IP   | The network address for the subnetwork |
 | ROUTER_IP   | The IP address for the default router |
 
-### Bootable Container Image and Container Registry
+#### Bootable Container Image and Container Registry
 | Parameter | Description |
 | --------- | ----------- |
 | BOOT_ISO         | Minimal boot ISO to extract kernel and initramfs to support PXE boot |
@@ -119,52 +120,130 @@ The full list of options in the `demo.conf` file are shown here.
 
 Make sure to download the `BOOT_ISO` file, e.g.
 [rhel-9.4-x86_64-boot.iso](https://access.redhat.com/downloads/content/rhel)
-to the local copy of this repository on your RHEL instance
-(e.g. ~/pxe-server). Run the following script to register and update
-the system.
+to the local copy of this repository on the SERVER
+(e.g. ~/bootc-pxe-server). Run the following script to register and
+update the system.
 
     sudo ./register-and-update.sh
     sudo reboot
 
-# Configure the rest of it
-enable building bootable containers
+### Install tooling to build a bootable container
+The network installation supports RHEL Image Mode, aka bootable
+containers. Install the tooling necessary to support creating a bootable
+container image on the SERVER.
 
     sudo ./config-bootc.sh
 
-set up an insecure local registry
+### Configure a local image registry
+During the network install, the client will need to pull the bootable
+container image from a registry. This can be a secure registry, but for
+this example we'll install a insecure local image registry on the SERVER.
 
     sudo ./config-registry.sh
 
-login to the registry using your Red Hat credentials to pull the base
-image.
+### Build the bootable container image
+In order to build the bootable container image, you'll need to pull the
+base image from the Red Hat registry. Use your Red Hat credentials to
+login to the registry so the later build can pull the base image.
 
+    . demo.conf
     podman login registry.redhat.io
 
-build and push a bootc container image to the local registry. this will
-be installed on the target device.
+We're now ready to build a bootable container image and push it to
+the local image registry. This bootable container image will be later
+installed on the client edge device. The container image is tagged as
+"v1" so that you can later build different versions with alternative
+tags. The client edge device will look for container images tagged as
+"prod" for updates.
 
     . demo.conf
     podman build -f Containerfile -t $CONTAINER_REPO:v1 .
     podman push $CONTAINER_REPO:v1
 
-tag the image as `prod` to mark it for our use case as the "production" image
+Tag the container image as "prod" to indicate its the production
+container image.
 
     podman tag $CONTAINER_REPO:v1 $CONTAINER_REPO:prod
     podman push $CONTAINER_REPO:prod
 
-generate the kickstart file to be served by the tftp server for the PXE boot
+### Create a kickstart for automated network installations
+Now, create the kickstart file that will be used to automate the
+installation of the client edge device via the network installation. Of
+note is the `ostreecontainer` directive in the generated kickstart
+file, which will pull content for the client edge device from the local
+container registry.
 
     ./gen-ks.sh
 
-set up a simple web server to host the kickstart file for the bootc container image and content for PXE http clients
+Review the generated file using the following command:
+
+    . demo.conf
+    less $BOOTC_KICKSTART
+
+### Create web server for kickstart and UEFI HTTP installs
+Set up a simple web server to host the kickstart file you previously
+generated as well as the kernel and initial ram disk for network
+installations. This server also supports UEFI HTTP client installations.
 
     sudo ./config-httpd.sh
 
-configure dhcpd server
+### Create the DHCP server
+The SERVER acts as the DHCP server for its local area network, providing
+IP addresses, routers, DNS servers, and other information including
+network boot parameters to its clients.
 
     sudo ./config-dhcpd.sh
 
-configure tftp server for PXE boot with contents from boot.iso
+### Create the TFTP server for PXE boot clients
+The last thing we configure is the TFTP server for legacy PXE boot
+clients. This takes content from the RHEL 9.4 boot ISO to provide the
+kernel and initial ram disk to the PXE clients.
 
     sudo ./config-tftp.sh
 
+## Review the setup
+Now that we've installed the services necessary for PXE and UEFI HTTP
+client network boots, we can review all the files that were created and
+make sure that the services are running.
+
+First, let's make sure the image registry is running and that the bootable
+container image is available for network installations.
+
+    systemctl status local-registry.service
+
+You should see that the service is `active`. Check that the bootable
+container image repository is available for installations.
+
+    . demo.conf
+    curl -s http://$HOSTIP:$REGISTRYPORT/v2/_catalog
+
+You should see the bootable container image repository listed.
+
+Next, check the DHCP server configuration.
+
+    sudo cat /etc/dhcp/dhcpd.conf
+
+You should see configuration set for both PXE and UEFI HTTP clients.
+
+Confirm the web server is running and has the RHEL boot content to
+support an network installation.
+
+    systemctl status httpd
+
+The service should be `active`. You can also review that the RHEL boot
+content is available to clients as well.
+
+    find /var/www/html
+
+You should see the kickstart file under `/var/www/html/` and the RHEL
+network boot content under `/var/www/html/redhat/`.
+
+Finally, you can review the RHEL network boot content for legacy PXE
+clients using the following command:
+
+    find /var/lib/tftpboot
+
+You can also review the GRUB boot menu entries here that will install
+the guest operating system.
+
+    cat /var/lib/tftpboot/redhat/EFI/BOOT/grub.cfg
