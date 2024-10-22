@@ -147,7 +147,7 @@ base image from the Red Hat registry. Use your Red Hat credentials to
 login to the registry so the later build can pull the base image.
 
     . demo.conf
-    podman login registry.redhat.io
+    podman login --username $SCA_USER --password $SCA_PASS registry.redhat.io
 
 We're now ready to build a bootable container image and push it to
 the local image registry. This bootable container image will be later
