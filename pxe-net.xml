@@ -1,0 +1,17 @@
+<network>
+  <name>pxe</name>
+  <forward mode='nat'>
+    <nat>
+      <port start='1024' end='65535'/>
+    </nat>
+  </forward>
+  <bridge name='virbr1' stp='on' delay='0'/>
+  <domain name='pxe' localOnly='yes'/>
+  <dns>
+    <host ip='192.168.124.1'>
+      <hostname>gateway</hostname>
+    </host>
+  </dns>
+  <ip address='192.168.124.1' netmask='255.255.255.0' localPtr='yes'>
+  </ip>
+</network>

@@ -22,28 +22,34 @@ is no competing DHCP server on the target network. How to do this really
 depends on your environment. I ran this as a guest VM using libvirt on
 a RHEL laptop.
 
-First, stop the default network.
+You can create a new virtual network using the libvirt `virsh` command
+and the XML file included in this repository. Please adjust settings in
+`pxe-net.xml` to match your desired IP address, network mask, etc. The
+network settings should make sense for the network being used. The
+`pxe-net.xml` file includes the following settings by default but these
+can be adjusted for your environment. You will also use these settings
+when manually configuring the network interface during installation
+of RHEL.
 
-    sudo virsh net-destroy default
+| Parameter | Value |
+| --------- | ----- |
+| Configuration | Manual |
+| IP Address | 192.168.124.2 |
+| Subnet Mask | 255.255.255.0 |
+| Default Router | 192.168.124.1 |
+| DNS Server | 192.168.124.1 |
 
-Edit the default network configuration.
+Use the following command to validate the XML and create the network.
 
-    sudo virsh net-edit default
+    sudo virsh net-create --validate pxe-net.xml
 
-Then delete the `<dhcp ... />` stanza and save the file. On my
-installation, I removed the following lines.
+Next, make sure to start the network.
 
-    <dhcp>
-      <range start='192.168.122.2' end='192.168.122.254'/>
-    </dhcp>
-
-Next, restart the virtual network for the changes to take effect.
-
-    sudo virsh net-start default
+    sudo virsh net-start pxe
 
 Finally, check that the virtual network is running.
 
-    sudo virsh net-info default
+    sudo virsh net-info pxe
 
 The virtual network should show as active.
 
@@ -65,18 +71,9 @@ During RHEL installation, configure a regular user with `sudo` privileges
 on the host.
 
 You'll also need to manually configure a static IP address for the SERVER
-as it will be the DHCP server for it's network. The network settings
-should make sense for the network being used. When manually configuring
-my network connection during installation, I used the following network
-settings based on my libvirt network.
-
-| Parameter | Value |
-| --------- | ----- |
-| Configuration | Manual |
-| IP Address | 192.168.122.2 |
-| Subnet Mask | 255.255.255.0 |
-| Default Router | 192.168.122.1 |
-| DNS Server | 192.168.122.1 |
+as it will be the DHCP server for it's network. Use the same settings
+above that you used to create the `pxe` virtual network if installing
+a local virtual guest.
 
 ## Prepare the SERVER
 These instructions assume that this repository is cloned or copied to
