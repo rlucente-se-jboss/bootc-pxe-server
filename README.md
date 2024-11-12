@@ -206,9 +206,9 @@ make sure that the services are running.
 First, let's make sure the image registry is running and that the bootable
 container image is available for network installations.
 
-    systemctl status local-registry.service
+    systemctl status --no-pager -l local-registry.service tftp.socket dhcpd httpd
 
-You should see that the service is `active`. Check that the bootable
+You should see that the services are `active`. Check that the bootable
 container image repository is available for installations.
 
     . demo.conf
