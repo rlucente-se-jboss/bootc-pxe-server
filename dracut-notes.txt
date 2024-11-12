@@ -14,7 +14,8 @@ COPY 50-custom-added-modules.conf /usr/lib/dracut/dracut.conf.d
 RUN set -x; kver="$(basename "$(find /usr/lib/modules -mindepth 1 -maxdepth 1 | sort -V | tail -1)")"; dracut -vf /usr/lib/modules/$kver/initramfs.img $kver
 ---
 
-To build the image, do not use dnf update inside the
+To build the bootable container image, do not use dnf update inside the
 Containerfile. Instead, use:
 
     podman build --pull=newer -f Containerfile -t $CONTAINER_REPO:v1 .
+
