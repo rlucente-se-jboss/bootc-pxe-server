@@ -8,10 +8,10 @@
   <bridge name='virbr1' stp='on' delay='0'/>
   <domain name='pxe' localOnly='yes'/>
   <dns>
-    <host ip='192.168.124.1'>
+    <host ip='192.168.40.1'>
       <hostname>gateway</hostname>
     </host>
   </dns>
-  <ip address='192.168.124.1' netmask='255.255.255.0' localPtr='yes'>
+  <ip address='192.168.40.1' netmask='255.255.255.0' localPtr='yes'>
   </ip>
 </network>

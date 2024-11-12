@@ -34,10 +34,10 @@ of RHEL.
 | Parameter | Value |
 | --------- | ----- |
 | Configuration | Manual |
-| IP Address | 192.168.124.2 |
+| IP Address | 192.168.40.2 |
 | Subnet Mask | 255.255.255.0 |
-| Default Router | 192.168.124.1 |
-| DNS Server | 192.168.124.1 |
+| Default Router | 192.168.40.1 |
+| DNS Server | 192.168.40.1 |
 
 Use the following command to validate the XML and create the network.
 
