@@ -4,8 +4,8 @@ https://docs.fedoraproject.org/en-US/bootc/initramfs/
 Make sure build host is at RHEL 9.5 since that's the latest with bootc
 1.1.0.
 
-For adding modules into initramfs.img make sure you upgraded host to
-RHEL 9.5 and then use the following Containerfile:
+For adding modules into initramfs.img make sure you upgraded bootable
+container build host to RHEL 9.5 and then use the following Containerfile:
 
 ---
 FROM registry.redhat.io/rhel9/rhel-bootc:9.4
@@ -17,4 +17,4 @@ RUN set -x; kver="$(basename "$(find /usr/lib/modules -mindepth 1 -maxdepth 1 | 
 To build the image, do not use dnf update inside the
 Containerfile. Instead, use:
 
-    podman build --pull=newer -f Containerfile -t $CONTAINER_REPO:$VER .
+    podman build --pull=newer -f Containerfile -t $CONTAINER_REPO:v1 .
