@@ -1,5 +1,11 @@
 FROM registry.redhat.io/rhel9/rhel-bootc:latest
 
+# add fips module to the initramfs
+COPY 50-custom-added-modules.conf /usr/lib/dracut/dracut.conf.d
+RUN    set -x \
+    && kver="$(basename "$(find /usr/lib/modules -mindepth 1 -maxdepth 1 | sort -V | tail -1)")" \
+    && dracut -vf /usr/lib/modules/$kver/initramfs.img $kver
+
 # configure an insecure local registry
 RUN  mkdir -p /etc/containers/registries.conf.d
 COPY 999-local-registry.conf /etc/containers/registries.conf.d/
