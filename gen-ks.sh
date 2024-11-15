@@ -19,7 +19,7 @@ part / --grow --fstype xfs
 
 # The referenced container image is what gets installed to the target
 # edge device
-ostreecontainer --url ${CONTAINER_REPO}:prod
+ostreecontainer --url ${OS_CONTAINER_REPO}:prod
 
 # optionally add a user
 user --name ${EDGE_USER} --groups wheel --iscrypted --password ${EDGE_HASH}
