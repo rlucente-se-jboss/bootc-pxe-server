@@ -27,10 +27,10 @@ RUN firewall-offline-cmd --service=http
 
 # Deploy the web console with the podman plugin
 #
-# NB: restorecon resolves this issue:
+# NB: setting SELinux permissive works around this issue:
 #     https://github.com/ostreedev/ostree-rs-ext/issues/510
 #
 RUN    dnf install -y firewalld cockpit cockpit-podman \
     && systemctl enable cockpit.socket \
     && firewall-offline-cmd --add-service=cockpit \
-    && restorecon -vFr /
+    && sed -i.bak 's/^\(SELINUX=\)enforcing/\1permissive/g' /etc/selinux/config
