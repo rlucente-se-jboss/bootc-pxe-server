@@ -17,5 +17,5 @@ RUN set -x; kver="$(basename "$(find /usr/lib/modules -mindepth 1 -maxdepth 1 | 
 To build the bootable container image, do not use dnf update inside the
 Containerfile. Instead, use:
 
-    podman build --pull=newer -f Containerfile -t $CONTAINER_REPO:v1 .
+    podman build --pull=newer -f Containerfile -t $OS_CONTAINER_REPO:v1 .
 
