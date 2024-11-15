@@ -30,7 +30,7 @@ cat > /var/lib/tftpboot/redhat/EFI/BOOT/grub.cfg <<EOF
 set timeout=60
 
 menuentry 'Install RHEL Image Mode' --class fedora --class gnu-linux --class gnu –class os {
-  linuxefi redhat/images/pxeboot/vmlinuz inst.stage2=http://$HOSTIP/redhat quiet inst.ks=http://$HOSTIP/$BOOTC_KICKSTART fips=1
+  linuxefi redhat/images/pxeboot/vmlinuz inst.stage2=http://$HOSTIP/redhat quiet inst.ks=http://$HOSTIP/$BOOTC_KICKSTART ${EXTRA_BOOT_ARGS[*]}
   initrdefi redhat/images/pxeboot/initrd.img
 }
 EOF
