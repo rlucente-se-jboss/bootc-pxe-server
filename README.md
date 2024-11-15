@@ -221,7 +221,7 @@ based on a simple descriptor file under `/etc/containers/systemd`. This
 is a very lightweight way to deploy container applications that don't
 require orchestration.
 
-    podman build --pull=newer -f DeployAppContainer \
+    podman build --pull=newer -f DeployAppContainerfile \
         -t $OS_CONTAINER_REPO:webapp \
         --build-arg BASE_IMAGE=$OS_CONTAINER_REPO:base \
         --build-arg APP_IMAGE=$APP_CONTAINER_REPO:v1 .
