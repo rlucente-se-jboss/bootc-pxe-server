@@ -1,0 +1,69 @@
+FROM registry.redhat.io/ubi9/httpd-24:9.5
+
+##
+## welcome message with rotating cube
+##
+USER 0
+RUN cat > /var/www/html/index.html <<EOF
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Welcome to the Plug Fest</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>CONTAINER APPLICATION: Welcome to the Plug Fest</h1>
+  <div class="container">
+    <div class="cube">
+      <div class="face front"></div>
+      <div class="face back"></div>
+      <div class="face right"></div>
+      <div class="face left"></div>
+      <div class="face top"></div>
+      <div class="face bottom"></div>
+    </div>
+  </div>
+</body>
+</html>
+EOF
+
+RUN cat > /var/www/html/style.css <<EOF
+body{
+    background: #000;
+}
+h1 {
+  color:  #04dabe;
+}
+.container{
+    width: 200px;
+    height: 200px;
+    perspective: 800px;
+    margin: 15% auto;
+}
+.cube{
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    animation: spin 5s linear infinite;
+}
+.face{
+    position: absolute;
+    border: 2px solid #04dabe;
+    width: 200px;
+    height: 200px;
+    border-radius: 10px;
+}
+.face.front{transform: translateZ(100px);}
+.face.back{transform: rotateY(180deg) translateZ(100px);}
+.face.right{transform: rotateY(90deg) translateZ(100px);}
+.face.left{transform: rotateY(-90deg) translateZ(100px);}
+.face.top{transform: rotateX(90deg) translateZ(100px);}
+.face.bottom{transform: rotateX(-90deg) translateZ(100px);}
+
+@keyframes spin{
+    0%{transform: rotateX(0deg) rotateY(0deg);}
+    100%{transform: rotateX(360deg) rotateY(360deg);}
+}
+EOF

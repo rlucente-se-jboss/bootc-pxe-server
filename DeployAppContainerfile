@@ -1,0 +1,22 @@
+ARG BASE_IMAGE
+FROM $BASE_IMAGE
+
+#
+# Create quadlet for the simple web application
+#
+ARG APP_IMAGE
+RUN cat > /etc/containers/systemd/simple-webapp.container <<EOF
+[Unit]
+Description=A simple web application
+
+[Container]
+Image=$APP_IMAGE
+ContainerName=webapp
+PublishPort=8080:8080
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target
+EOF
