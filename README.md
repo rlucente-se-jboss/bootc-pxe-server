@@ -346,9 +346,21 @@ address assignment. On the SERVER,
 
     cat /var/lib/dhcpd/dhcp.leases
 
+### Test the default PHP web application on the CLIENT
 Once you know the IP address, browse to the URL `http://CLIENT_IP` and
 you should see a PHP information page, describing various facts about
 the CLIENT.
+
+### Test the web console on the CLIENT
+You can also review the web console for the client which enables you
+to drill down into many aspects of the edge device. To access the web
+console, browse to the URL `https://CLIENT_IP:9090` and you should see
+the login page. Use the credentials `EDGE_USER` and `EDGE_PASS` in the
+`demo.conf` file to login to the web console. You'll then be presented
+with the web console page with a navigation bar on the left hand side to
+drill into various aspects of the system. You can enable administrative
+access by clicking on that link and then using the `EDGE_PASS` parameter
+to enable it.
 
 ### Deploy a container application by updating the CLIENT
 Next, let's update the CLIENT to deploy the simple container web
