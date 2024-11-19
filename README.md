@@ -133,7 +133,7 @@ options in the `demo.conf` file are shown here.
 | EXTRA_BOOT_ARGS    | Additional kernel boot arguments as a shell array                    |
 
 Make sure to download the latest `BOOT_ISO` file, e.g.
-[rhel-9.4-x86_64-boot.iso](https://access.redhat.com/downloads/content/rhel)
+[rhel-9.5-x86_64-boot.iso](https://access.redhat.com/downloads/content/rhel)
 to the local copy of this repository on the SERVER
 (e.g. ~/bootc-pxe-server). Run the following script to register and
 update the system.
@@ -275,7 +275,7 @@ network boot parameters to its clients.
 
 ### Create the TFTP server for PXE boot clients
 The last thing we configure is the TFTP server for legacy PXE boot
-clients. This takes content from the RHEL 9.4 boot ISO to provide the
+clients. This takes content from the RHEL 9.5 boot ISO to provide the
 kernel and initial ram disk to the PXE clients.
 
     sudo ./config-tftp.sh

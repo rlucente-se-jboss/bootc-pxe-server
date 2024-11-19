@@ -8,7 +8,7 @@ For adding modules into initramfs.img make sure you upgraded bootable
 container build host to RHEL 9.5 and then use the following Containerfile:
 
 ---
-FROM registry.redhat.io/rhel9/rhel-bootc:9.4
+FROM registry.redhat.io/rhel9/rhel-bootc:latest
 
 COPY 50-custom-added-modules.conf /usr/lib/dracut/dracut.conf.d
 RUN set -x; kver="$(basename "$(find /usr/lib/modules -mindepth 1 -maxdepth 1 | sort -V | tail -1)")"; dracut -vf /usr/lib/modules/$kver/initramfs.img $kver
