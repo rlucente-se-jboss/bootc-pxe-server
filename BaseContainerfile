@@ -1,6 +1,6 @@
 FROM registry.redhat.io/rhel9/rhel-bootc:latest
 
-## # add fips module to the initramfs
+## # add custom module to the initramfs
 ## COPY 50-custom-added-modules.conf /usr/lib/dracut/dracut.conf.d
 ## RUN    set -x \
 ##     && kver="$(basename "$(find /usr/lib/modules -mindepth 1 -maxdepth 1 | sort -V | tail -1)")" \
