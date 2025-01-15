@@ -113,13 +113,15 @@ options in the `demo.conf` file are shown here.
 | EDGE_HASH | SHA-512 hash of the EDGE_PASS parameter |
 
 #### DHCP Settings
-|  Parameter  |                                   Description                                   |
-| ----------- | ------------------------------------------------------------------------------- |
-| HOSTIP      | The routable IP address to the PXE server                                       |
-| SUBNET      | The first three tuples of the IPv4 address of the subnetwork for the PXE server |
-| SUBNET_MASK | The subnet mask (e.g. 255.255.255.0) for the PXE server                         |
-| SUBNET_IP   | The network address for the subnetwork                                          |
-| ROUTER_IP   | The IP address for the default router                                           |
+|   Parameter   |                                   Description                                   |
+| ------------- | ------------------------------------------------------------------------------- |
+| HOSTIP        | The routable IP address to the PXE server                                       |
+| SUBNET        | The first three tuples of the IPv4 address of the subnetwork for the PXE server |
+| SUBNET_MASK   | The subnet mask (e.g. 255.255.255.0) for the PXE server                         |
+| SUBNET_IP     | The network address for the subnetwork                                          |
+| ROUTER_IP     | The IP address for the default router                                           |
+| DHCP_IP_START | The start of the dynamically assigned IP address range                          |
+| DHCP_IP_END   | The end (inclusive) of the dynamically assigned IP address range                |
 
 #### Bootable Container Image and Container Registry
 |     Parameter      |                            Description                               |

@@ -26,7 +26,7 @@ subnet $SUBNET_IP netmask $SUBNET_MASK {
   option domain-name-servers $ROUTER_IP;
 
   # hand out addresses in the given range
-  range $SUBNET.100 $SUBNET.200;
+  range $DHCP_IP_START $DHCP_IP_END;
 
   # configuration for PXE clients using vendor-class-identifier
   class "pxeclients" {
