@@ -184,7 +184,7 @@ login to the registry so the later build can pull the base layer.
     . demo.conf
     podman login --username $SCA_USER --password $SCA_PASS registry.redhat.io
 
-We're now ready to build bootable container image and push it to the
+We're now ready to build a bootable container image and push it to the
 local image registry. This bootable container image will be installed
 on the CLIENT natively as the operating system. The container image is
 tagged as `base` so that you can inherit from it for additional customized
@@ -290,13 +290,13 @@ make sure that the services are running.
 First, let's make sure the image registry is running and that the bootable
 container image is available for network installations.
 
-    systemctl status --no-pager -l local-registry.service tftp.socket dhcpd httpd
+    systemctl status --no-pager -l local-registry.service tftp.socket dhcpd httpd | grep -B2 Active
 
 You should see that the services are `active`. Check that the bootable
 container image repository is available for installations.
 
     . demo.conf
-    curl -s http://$HOSTIP:$REGISTRYPORT/v2/_catalog
+    curl -s http://$HOSTIP:$REGISTRYPORT/v2/_catalog | jq .
 
 You should see the bootable container image repository listed.
 
@@ -346,7 +346,7 @@ by reviewing the `/var/lib/dhcpd/dhcp.leases` file on the SERVER and
 then matching the MAC address for the CLIENT with the entry for the IP
 address assignment. On the SERVER,
 
-    cat /var/lib/dhcpd/dhcp.leases
+    cat /var/lib/dhcpd/dhcpd.leases
 
 ### Test the default PHP web application on the CLIENT
 Once you know the IP address, browse to the URL `http://CLIENT_IP` and
@@ -377,7 +377,7 @@ container image.
 
     cd ~/bootc-pxe-server
     . demo.conf
-    podman tag $OS_CONTAINER_REPO:webapp $OS_CONTAINER_IMAGE:prod
+    podman tag $OS_CONTAINER_REPO:webapp $OS_CONTAINER_REPO:prod
     podman push $OS_CONTAINER_REPO:prod
 
 The credentials to login to the CLIENT are the `EDGE_USER` and `EDGE_PASS`
