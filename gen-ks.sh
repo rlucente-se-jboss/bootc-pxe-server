@@ -17,6 +17,17 @@ clearpart --all --initlabel --disklabel=gpt
 reqpart --add-boot
 part / --grow --fstype xfs
 
+EOF
+
+if [ ! -z "${EXTRA_BOOT_ARGS[*]}" ]
+then
+    cat >> $BOOTC_KICKSTART <<EOF
+bootloader --append="${EXTRA_BOOT_ARGS[*]}"
+
+EOF
+fi
+
+cat >> $BOOTC_KICKSTART <<EOF
 # The referenced container image is what gets installed to the target
 # edge device
 ostreecontainer --url ${OS_CONTAINER_REPO}:prod
